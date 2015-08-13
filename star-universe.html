@@ -1,0 +1,112 @@
+<html>
+<head>
+<title>
+Start Universe 
+</title>
+<style type = "text/css">
+* {
+  box-sizing: border-box;
+}
+
+body {
+  overflow: hidden;
+}
+
+canvas {
+  border: 1px solid #333;
+  position: absolute;
+  background: #000;
+}
+</style>
+</head>
+<body>
+<canvas></canvas>
+<script type = "text/javascript">
+var c = document.querySelector('canvas'),
+    ctx = c.getContext('2d'),
+    points = [],
+    MAX_POINTS = 1000;
+
+c.width = window.innerWidth;
+c.height = window.innerHeight;
+
+function random(min, max) {
+  return ~~(Math.random() * (max - min)) + min;
+}
+
+function resize() {
+  c.width = window.innerWidth;
+  c.height = window.innerHeight;
+}
+
+function Point(x, y) {
+  this.x = x;
+  this.y = y;
+  this.size = random(2, 6);
+}
+
+Point.prototype.draw = function() {
+  ctx.fillRect(this.x, this.y, this.size, this.size);
+}
+
+Point.prototype.update = function() {
+  var vel;
+  
+  switch(this.size) {
+      case 2:
+        vel = 0.4;
+        break;
+      case 3:
+        vel = 0.8;
+        break;
+      case 4:
+        vel = 1.6;
+      break;
+    case 5:
+      vel = 3.2;
+      break;
+      
+    default:
+      break;
+  } 
+  
+  this.x -= vel;
+  
+  if (this.x < 0) {
+    this.x = c.width;
+    this.size = random(2, 6);
+    this.y = random(0, c.height);
+  }
+}
+
+function render() {
+  ctx.fillStyle = 'rgba(255,255,255,1)';
+  points.forEach(function(point) {
+    point.draw();
+  });
+}
+
+function update() {
+  points.forEach(function(point) {
+    point.update();
+  });
+}
+
+function loop() {
+  ctx.clearRect(0, 0, c.width, c.height);
+  update();
+  render();
+  
+  requestAnimationFrame(loop);
+}
+
+window.addEventListener('resize', resize);
+
+for (var i = 0; i < MAX_POINTS; i++) {
+points.push(new Point(random(0, c.width), random(0, c.height)));
+}
+
+loop();
+</script>
+</body>
+</html>
